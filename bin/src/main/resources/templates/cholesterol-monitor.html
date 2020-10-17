@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+
+</head>
+<body>
+
+<div class = 'container'>
+<div class="btn-group" role="group" style = "margin-bottom: 10px;margin-top: 5px">
+
+    <a class = "btn btn-outline-dark"  href="/index" role = "button">
+    Choose Another Practitioner
+    </a>
+    <a class = "btn btn-outline-dark"  href="/patients" role = "button">
+        Patients List
+    </a>
+</div>
+
+
+
+<div class="container">
+  <div class = "row">
+
+<div class="card-body col-sm-4 " >
+    <form action="#" th:action="@{/setTimer}" th:object="${timer}" method="post">
+
+        <div class="form-group">
+            <label for="Form2">Refresh Time:</label>
+            <input type="text" class="form-control" id="Form2" th:field="*{seconds}" />
+
+
+        </div>
+        <p>
+            <input type="submit" name ="action" class="btn btn-success" value="Set" />
+            <input type="submit" class="btn btn-warning" name = "action" value="Stop"/></p>
+    </form>
+</div>
+
+        <div class="card-body col-sm-4" >
+            <form action="#" th:action="@{/setCholesterol}"  th:object="${threshold}" method="post">
+
+                <div class="form-group">
+                    <label>Cholesterol Threshold</label>
+                    <input type="text" class="form-control"  th:field="*{value}" />
+
+
+                </div>
+                <p>
+                    <input type="submit" name ="action" class="btn btn-success" value="Set" />
+
+            </form>
+        </div>
+    </div>
+
+</div>
+
+
+
+    <script th:inline="javascript">
+/*<![CDATA[*/
+
+function setRefreshTimer() {
+
+       window.location = 'http://localhost:8081/refresh';
+}
+
+if (/*[[${timer.seconds}]]*/ != 0){
+var interval = setInterval(function() { setRefreshTimer(); }, /*[[${timer.seconds}*1000]]*/ );
+}
+
+
+/*]]>*/
+</script>
+
+
+
+</div>
+<div class="container">
+<table class = "table" >
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Total Cholesterol</th>
+        <th>Time</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${monitorList.empty}">
+        <td colspan="2"> No patients in monitor.. </td>
+    </tr>
+    <tr style="color: red;" th:if="${patient.cholesterol >averageChol and #lists.size(monitorList)>1}" th:each="patient : ${monitorList}">
+
+    <td th:text="${patient.name} + ' ' + ${patient.surname}"></td>
+        <td th:text="${patient.cholesterol}"></td>
+        <td th:text="${patient.cholesterolDate}"></td>
+        <td>
+            <form th:method="post" th:action="@{/patientDetails}" th:object="${patient}" >
+                <input type="hidden" th:name=id th:value = "${patient.id}"/>
+                <input type="hidden" th:name=name th:value = "${patient.name}"/>
+                <input type="hidden" th:name=surname th:value = "${patient.surname}"/>
+                <input type="hidden" th:name=cholesterol th:value = "${patient.cholesterol}"/>
+                <input type="hidden" th:name=cholesterolDate th:value = "${patient.cholesterolDate}"/>
+                <input type="hidden" th:name=birthDate th:value = "${patient.birthDate}"/>
+                <input type="hidden" th:name=gender th:value = "${patient.gender}"/>
+                <input type="hidden" th:name=city th:value = "${patient.city}"/>
+                <input type="hidden" th:name=state th:value = "${patient.state}"/>
+                <input type="hidden" th:name=country th:value = "${patient.country}"/>
+                <input type="hidden" th:name=address th:value = "${patient.address}"/>
+                <button class="btn btn-info btn-sm" type="submit" >Details
+                </button>
+            </form>
+        </td>
+
+    </tr>
+    <tr th:if="${patient.cholesterol > averageChol and #lists.size(monitorList)==1 and patient.cholesterol > 0.0 and averageChol != patient.cholesterol}" th:each="patient : ${monitorList}">
+
+        <td th:text="${patient.name} + ' ' + ${patient.surname}"></td>
+        <td th:text="${patient.cholesterol}"></td>
+        <td th:text="${patient.cholesterolDate}"></td>
+        <td>
+            <form th:method="post" th:action="@{/patientDetails}" th:object="${patient}" >
+                <input type="hidden" th:name=id th:value = "${patient.id}"/>
+                <input type="hidden" th:name=name th:value = "${patient.name}"/>
+                <input type="hidden" th:name=surname th:value = "${patient.surname}"/>
+                <input type="hidden" th:name=cholesterol th:value = "${patient.cholesterol}"/>
+                <input type="hidden" th:name=cholesterolDate th:value = "${patient.cholesterolDate}"/>
+                <input type="hidden" th:name=birthDate th:value = "${patient.birthDate}"/>
+                <input type="hidden" th:name=gender th:value = "${patient.gender}"/>
+                <input type="hidden" th:name=city th:value = "${patient.city}"/>
+                <input type="hidden" th:name=state th:value = "${patient.state}"/>
+                <input type="hidden" th:name=country th:value = "${patient.country}"/>
+                <input type="hidden" th:name=address th:value = "${patient.address}"/>
+                <button class="btn btn-info btn-sm" type="submit" >Details
+                </button>
+            </form>
+        </td>
+
+    </tr>
+
+    <tr  th:if="${patient.cholesterol < averageChol and patient.cholesterol > 0.0 }" th:each="patient : ${monitorList}">
+
+        <td th:text="${patient.name} + ' ' + ${patient.surname}"></td>
+        <td th:text="${patient.cholesterol}"></td>
+        <td th:text="${patient.cholesterolDate}"></td>
+        <td>
+            <form th:method="post" th:action="@{/patientDetails}" th:object="${patient}" >
+                <input type="hidden" th:name=id th:value = "${patient.id}"/>
+                <input type="hidden" th:name=name th:value = "${patient.name}"/>
+                <input type="hidden" th:name=surname th:value = "${patient.surname}"/>
+                <input type="hidden" th:name=cholesterol th:value = "${patient.cholesterol}"/>
+                <input type="hidden" th:name=cholesterolDate th:value = "${patient.cholesterolDate}"/>
+                <input type="hidden" th:name=birthDate th:value = "${patient.birthDate}"/>
+                <input type="hidden" th:name=gender th:value = "${patient.gender}"/>
+                <input type="hidden" th:name=city th:value = "${patient.city}"/>
+                <input type="hidden" th:name=state th:value = "${patient.state}"/>
+                <input type="hidden" th:name=country th:value = "${patient.country}"/>
+                <input type="hidden" th:name=address th:value = "${patient.address}"/>
+                <button class="btn btn-info btn-sm" type="submit" >Details
+                </button>
+            </form>
+        </td>
+
+    </tr>
+
+    <tr  th:if="${patient.cholesterol == 0.0 }" th:each="patient : ${monitorList}">
+
+        <td th:text="${patient.name} + ' ' + ${patient.surname}"></td>
+        <td th:text="'No Data Recorded'"></td>
+        <td th:text="'N/A'"></td>
+        <td> <button class="btn btn-info btn-sm" type="submit">Details
+        </button></td>
+
+    </tr>
+    </tbody>
+
+
+</table>
+<div class="row" style="height: 250px;">
+
+    <div class="col-sm-6" style="height: 250px; overflow-y: scroll;">
+        <div class="card">
+            <div class="card-body">
+                <div id="patientList">
+                    <table class = "table">
+                        <thead><th>Not Monitoring</th></thead>
+                        <tbody>
+                        <tr th:if="${monitorPatientList.empty}">
+                            <td colspan="2"> No patients in list.. </td>
+                        </tr>
+                        <tr th:each="patient : ${monitorPatientList}">
+                            <td><span th:text="${patient.name} + ' ' + ${patient.surname}"></span></td>
+                            <td><form th:method="post" th:action="@{/toMonitor}" th:object="${patient}" >
+                                <input type="hidden" th:name=id th:value = "${patient.id}"/>
+                                <input type="hidden" th:name=name th:value = "${patient.name}"/>
+                                <input type="hidden" th:name=surname th:value = "${patient.surname}"/>
+                                <input type="hidden" th:name=cholesterol th:value = "${patient.cholesterol}"/>
+                                <input type="hidden" th:name=cholesterolDate th:value = "${patient.cholesterolDate}"/>
+                                <input type="hidden" th:name=birthDate th:value = "${patient.birthDate}"/>
+                                <input type="hidden" th:name=gender th:value = "${patient.gender}"/>
+                                <input type="hidden" th:name=city th:value = "${patient.city}"/>
+                                <input type="hidden" th:name=state th:value = "${patient.state}"/>
+                                <input type="hidden" th:name=country th:value = "${patient.country}"/>
+                                <input type="hidden" th:name=address th:value = "${patient.address}"/>
+                                <button class = "btn btn-primary" type="submit">Add
+                                </button>
+                            </form></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6" style="height: 250px; overflow-y: scroll;" >
+        <div class="card">
+            <div class="card-body">
+                <div id="monitorList">
+
+                    <table class = "table">
+                        <thead><th>Currently Monitoring</th></thead>
+                        <tbody>
+                        <tr th:if="${monitorList.empty}">
+                            <td colspan="2"> No patients in list.. </td>
+                        </tr>
+                        <tr th:each="patient : ${monitorList}">
+                            <td><span th:text="${patient.name} + ' ' + ${patient.surname}"></span></td>
+                            <td><form th:method="post" th:action="@{/toPatients}" th:object="${patient}" >
+                                <input type="hidden" th:name=id th:value = "${patient.id}"/>
+                                <input type="hidden" th:name=name th:value = "${patient.name}"/>
+                                <input type="hidden" th:name=surname th:value = "${patient.surname}"/>
+                                <input type="hidden" th:name=cholesterol th:value = "${patient.cholesterol}"/>
+                                <input type="hidden" th:name=cholesterolDate th:value = "${patient.cholesterolDate}"/>
+                                <input type="hidden" th:name=birthDate th:value = "${patient.birthDate}"/>
+                                <input type="hidden" th:name=gender th:value = "${patient.gender}"/>
+                                <input type="hidden" th:name=city th:value = "${patient.city}"/>
+                                <input type="hidden" th:name=state th:value = "${patient.state}"/>
+                                <input type="hidden" th:name=country th:value = "${patient.country}"/>
+                                <input type="hidden" th:name=address th:value = "${patient.address}"/>
+                                <button class = "btn btn-danger" type="submit">Remove
+                                </button>
+                            </form></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+</div>
+</body>
+</html>

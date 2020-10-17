@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="patientAttributes">
+    <input type="hidden" th:name=id th:value = "${patient.id}"/>
+    <input type="hidden" th:name=name th:value = "${patient.name}"/>
+    <input type="hidden" th:name=surname th:value = "${patient.surname}"/>
+    <input type="hidden" th:name=cholesterol th:value = "${patient.cholesterol}"/>
+    <input type="hidden" th:name=cholesterolDate th:value = "${patient.cholesterolDate}"/>
+    <input type="hidden" th:name=diastolicPressure th:value = "${patient.diastolicPressure}"/>
+    <input type="hidden" th:name=diastolicDate th:value = "${patient.diastolicDate}"/>
+    <input type="hidden" th:name=systolicPressure th:value = "${patient.systolicPressure}"/>
+    <input type="hidden" th:name=systolicDate th:value = "${patient.systolicDate}"/>
+    <input type="hidden" th:name=systolicPressureObservations th:value = "${patient.systolicPressureObservations}"/>
+    <input type="hidden" th:name=systolicPressureObservationDates th:value = "${patient.systolicPressureObservationDates}">
+    <input type="hidden" th:name=birthDate th:value = "${patient.birthDate}"/>
+    <input type="hidden" th:name=gender th:value = "${patient.gender}"/>
+    <input type="hidden" th:name=city th:value = "${patient.city}"/>
+    <input type="hidden" th:name=state th:value = "${patient.state}"/>
+    <input type="hidden" th:name=country th:value = "${patient.country}"/>
+    <input type="hidden" th:name=address th:value = "${patient.address}"/>
+
+    <input type="hidden" th:name=cholesterolOn th:value = "${patient.cholesterolOn}"/>
+    <input type="hidden" th:name=pressureOn th:value = "${patient.pressureOn}"/>
+    <input type="hidden" th:name=smoker th:value = "${patient.smoker}"/>
+
+</div>
+
+<div th:fragment = "cholesterolOffData">
+    <td align="center" th:text = " '-' ">
+    <td align="center" th:text = " '-' ">
+    <td>
+        <form th:method="post" th:action="@{/cholesterol-switch}" th:object="${patientToFilter}">
+            <div th:insert="fragments/components :: patientAttributes"></div>
+
+            <button class="btn btn-outline-danger btn-sm " type="submit">Off
+            </button>
+
+        </form>
+    </td>
+</div>
+
+<div th:fragment = "cholesterolOnData">
+    <td style="color: red; font-weight: bold;"
+        th:if = " ${patient.cholesterol > threshold.value and threshold.value != 0}
+                       or
+                   ${patient.cholesterol > averageChol and #lists.size(monitorList)!=1 and patient.cholesterol > threshold.value }"
+        th:text="${patient.cholesterol}">
+    </td>
+
+    <td style="color: black;"
+        th:unless="${patient.cholesterol > threshold.value and threshold.value != 0  }
+                            or
+                         ${patient.cholesterol > averageChol and #lists.size(monitorList)!=1 and patient.cholesterol > threshold.value }"
+        th:text="${patient.cholesterol}">
+    </td>
+
+    <td th:text="${patient.cholesterolDate}"></td>
+    <td>
+        <form th:method="post" th:action="@{/cholesterol-switch}" th:object="${patientToFilter}">
+            <div th:insert="fragments/components :: patientAttributes"></div>
+
+            <button class="btn btn-success btn-sm " type="submit">On
+            </button>
+
+        </form>
+    </td>
+</div>
+
+<div th:fragment = "pressureOffData">
+    <td align="center" th:text = " '-' ">
+    <td align="center" th:text = " '-' ">
+    <td align="center" th:text = " '-' ">
+    <td>    <form th:method="post" th:action="@{/pressure-switch}" th:object="${patientToFilter}">
+    <div th:insert="fragments/components :: patientAttributes"></div>
+
+        <button class="btn btn-outline-danger btn-sm" type="submit">Off
+        </button>
+
+</form></td>
+</div>
+
+<div th:fragment = "pressureOnData">
+    <td style="color: purple; font-weight: bold;"
+        th:if = "${pressureThreshold.systolic != 0 and patient.systolicPressure >= pressureThreshold.systolic}"
+        th:text="${patient.systolicPressure}">
+
+    </td>
+    <td style="color: black;"
+        th:unless = "${pressureThreshold.systolic != 0 and patient.systolicPressure >= pressureThreshold.systolic}"
+        th:text="${patient.systolicPressure}">
+
+    </td>
+
+    <td style="color: purple; font-weight: bold;"
+        th:if = "${pressureThreshold.diastolic != 0 and patient.diastolicPressure >= pressureThreshold.diastolic}  "
+
+        th:text="${patient.diastolicPressure}">
+
+    </td>
+    <td style="color: black; "
+        th:unless = "${pressureThreshold.diastolic != 0 and patient.diastolicPressure >= pressureThreshold.diastolic}  "
+        th:text="${patient.diastolicPressure}">
+
+    </td>
+
+    <td th:text="${patient.diastolicDate}"></td>
+    <td>    <form th:method="post" th:action="@{/pressure-switch}" th:object="${patientToFilter}">
+        <div th:insert="fragments/components :: patientAttributes"></div>
+
+        <button class="btn btn-success btn-sm" type="submit">On
+        </button>
+
+    </form></td>
+</div>
+
+
+
+<div th:fragment = "pressureButton" >
+
+    <form th:method="post" th:action="@{/pressure-switch}" th:object="${patientToFilter}">
+        <div th:insert="fragments/components :: patientAttributes"></div>
+        <div th:if="${patient.pressureOn} == false ">
+            <button class="btn btn-outline-danger btn-sm" type="submit"> Off
+            </button>
+        </div>
+        <div th:if="${patient.pressureOn} == true ">
+            <button class="btn btn-success btn-sm" type="submit">On
+            </button>
+        </div>
+    </form>
+
+</div>
+
+</body>
+</html>

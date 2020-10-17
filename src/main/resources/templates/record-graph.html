@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+
+<div class="btn-group" role="group" style = "margin-bottom: 10px;margin-top: 8px">
+    <a class = "btn btn-dark"  href="/index" role = "button">
+        Choose Another Practitioner
+    </a>
+    <a class = "btn btn-dark"  href="/load-high-bp" role = "button">
+        Records
+    </a>
+    </div>
+
+
+<script>
+window.onload = function () {
+
+var dps = [];	
+	
+for (var i = 0; i < [[$SystolicValues]].length; i++){
+	dps.push({
+		
+		x : [[$SystolicDates[i]]],
+		y : [[$SystolicValues[i]]]
+	
+	});
+}
+
+var chart = new CanvasJS.Chart("chartContainer", {
+	animationEnabled: true,
+	theme: "light2",
+	title:{
+		text: "Simple Line Chart"
+	},
+	axisY:{
+		includeZero: false
+	},
+	data: [{        
+		type: "line",
+      	indexLabelFontSize: 16,
+		dataPoints: dps
+	}]
+});
+chart.render();
+
+}
+</script>
+</head>
+<body>
+<div id="chartContainer" style="height: 370px; width: 50%;"></div>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+</body>
+</html>

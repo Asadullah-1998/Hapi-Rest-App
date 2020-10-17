@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+
+</head>
+<body>
+
+<div class='container'>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="btn-group" role="group" style="margin-bottom: 10px;margin-top: 5px">
+
+                <a class="btn btn-outline-dark" href="/index" role="button">
+                    Choose Another Practitioner
+                </a>
+                <a class="btn btn-outline-dark" href="/patients" role="button">
+                    Patients List
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class = "row">
+
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="container">
+        <div class="row">
+
+            <div class="card-body col-sm-3 ">
+                <form action="#" th:action="@{/setTimer}" th:object="${timer}" method="post">
+
+                    <div class="form-group">
+                        <label for="Form2">Refresh Time:</label>
+                        <input type="text" class="form-control" id="Form2" th:field="*{seconds}"/>
+
+
+                    </div>
+                    <p>
+                        <input type="submit" name="action" class="btn btn-success" value="Set"/>
+                        <input type="submit" class="btn btn-warning" name="action" value="Stop"/></p>
+                </form>
+            </div>
+
+            <div class="card-body col-sm-3">
+                <form action="#" th:action="@{/setCholesterol}" th:object="${threshold}" method="post">
+
+                    <div class="form-group">
+                        <label>Cholesterol Threshold</label>
+                        <input type="text" class="form-control" th:field="*{value}"/>
+
+
+                    </div>
+                    <p>
+                        <input type="submit" name="action" class="btn btn-success" value="Set"/>
+
+                </form>
+            </div>
+
+            <div class="card-body col-sm-4">
+                <form action="#" th:action="@{/setPressure}" th:object="${pressureThreshold}" method="post">
+
+
+                    <div class="row">
+                        <div class="col">
+                            <label> Systolic Threshold</label>
+                            <input type="text" class="form-control" th:field="*{systolic}"/>
+                        </div>
+                        <div class="col">
+                            <label> Diastolic Threshold</label>
+                            <input type="text" class="form-control" th:field="*{diastolic}"/>
+                        </div>
+
+
+                    </div>
+
+                    <div style = "padding-left: 16px;" class="row mt-3">
+                        <input type="submit" name="action" class="btn btn-success" value="Set"/>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card-body col-sm-3" th:if="${pressureList!= null and #lists.size(pressureList)!=0}" >
+                <form action="#" th:action="@{/load-high-bp}"  method="get">
+
+                        <input type="submit" name="action" class="btn btn-danger" value="View High Pressure Patients"/>
+
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script th:inline="javascript">
+/*<![CDATA[*/
+
+function setRefreshTimer() {
+
+       window.location = 'http://localhost:8081/refresh';
+}
+
+if (/*[[${timer.seconds}]]*/ != 0){
+var interval = setInterval(function() { setRefreshTimer(); }, /*[[${timer.seconds}*1000]]*/ );
+}
+
+
+/*]]>*/
+
+
+    </script>
+    
+    <div style = "padding-left: 20px; padding-bottom: 10px;">
+    <form th:method="get" th:action="@{/toBarGraph}" th:object="${monitorList}">
+	<a class="btn btn-info" href="/toBarGraph" role="button">
+    Display Cholesterol Graph
+    </a>    </button>
+    </form>
+    </div>
+
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Total Cholesterol(mg/dL)</th>
+            <th>Time</th>
+            <th>Cholesterol Monitor Status</th>
+            <th>Systolic BP(mmHg)</th>
+            <th>Diastolic BP(mmHg)</th>
+            <th>Time</th>
+            <th>Pressure Monitor Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${monitorList.empty}">
+            <td colspan="2"> No patients in monitor..</td>
+        </tr>
+
+
+        <tr th:each="patient : ${monitorList}" >
+
+            <td th:text="${patient.name} + ' ' + ${patient.surname}"></td>
+
+            <div th:if=" ${patient.cholesterolOn == true}" th:insert="fragments/components :: cholesterolOnData"></div>
+            <div th:if=" ${patient.cholesterolOn == false}" th:insert="fragments/components :: cholesterolOffData"></div>
+
+
+            <div th:if= "${patient.pressureOn == true}" th:insert="fragments/components :: pressureOnData"></div>
+            <div th:if= "${patient.pressureOn == false}" th:insert="fragments/components :: pressureOffData"></div>
+
+            <td>
+                <form th:method="post" th:action="@{/patientDetails}" th:object="${patient}">
+                    <div th:insert="fragments/components :: patientAttributes"></div>
+                    <button class="btn btn-info btn-sm" type="submit">Details
+                    </button>
+                </form>
+            </td>
+        </tr>
+
+
+
+
+
+
+        <tr th:if="${patient.cholesterol == 0.0 and patient.systolicPressure == null}"
+            th:each="patient : ${monitorList}">
+
+            <td th:text="${patient.name} + ' ' + ${patient.surname}"></td>
+            <td th:text="'No Data Recorded'"></td>
+            <td th:text="'N/A'"></td>
+            <td th:text="'No Data Recorded'"></td>
+            <td th:text="'No Data Recorded'"></td>
+            <td th:text="'N/A'"></td>
+            <td>
+                <button class="btn btn-danger btn-sm" type="submit">No Details
+                </button>
+            </td>
+
+        </tr>
+        </tbody>
+
+
+    </table>
+    
+    
+    
+    <div class="card bg-light mb-3" style="max-width: 25rem;">
+    <div class="card-header"><p th:text = "Summary"></p></div>
+    <div class="card-body">
+
+        <p th:text = "'Above Average Cholesterol: ' + ${summary.aboveAverageChol}"></p>
+        <p th:text = "'High Systolic Pressure: ' + ${summary.highSystolic}"></p>
+        <p th:text = "'High Diastolic Pressure: ' + ${summary.highDiastolic}"></p>
+        <p th:text = "'Non-Smokers: ' + ${summary.nonSmokers}"></p>
+        
+    </div>
+    </div>
+
+    
+
+    <div class="row" style="height: 250px;">
+
+        <div class="col-sm-6" style="height: 250px; overflow-y: scroll;">
+            <div class="card">
+                <div class="card-body">
+                    <div id="patientList">
+                        <table class="table">
+                            <thead>
+                            <th>Not Monitoring</th>
+                            </thead>
+                            <tbody>
+                            <tr th:if="${monitorPatientList.empty}">
+                                <td colspan="2"> No patients in list..</td>
+                            </tr>
+                            <tr th:each="patient : ${monitorPatientList}">
+                                <td><span th:text="${patient.name} + ' ' + ${patient.surname}"></span></td>
+                                <td>
+                                    <form th:method="post" th:action="@{/toMonitor}" th:object="${patient}">
+                                        <div th:insert="fragments/components :: patientAttributes"></div>
+                                        <button class="btn btn-primary" type="submit">Add
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6" style="height: 250px; overflow-y: scroll;">
+            <div class="card">
+                <div class="card-body">
+                    <div id="monitorList">
+
+                        <table class="table">
+                            <thead>
+                            <th>Currently Monitoring</th>
+                            </thead>
+                            <tbody>
+                            <tr th:if="${monitorList.empty}">
+                                <td colspan="2"> No patients in list..</td>
+                            </tr>
+                            <tr th:each="patient : ${monitorList}">
+                                <td><span th:text="${patient.name} + ' ' + ${patient.surname}"></span></td>
+                                <td>
+                                    <form th:method="post" th:action="@{/toPatients}" th:object="${patient}">
+                                        <div th:insert="fragments/components :: patientAttributes"></div>
+                                        <button class="btn btn-danger" type="submit">Remove
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

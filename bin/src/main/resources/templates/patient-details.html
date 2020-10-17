@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Patient Details</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+</head>
+<body>
+
+<div class="btn-group" role="group" style = "margin-bottom: 10px;margin-top: 8px">
+    <a class = "btn btn-dark"  href="/index" role = "button">
+        Choose Another Practitioner
+    </a>
+    <a class = "btn btn-dark"  href="/monitor" role = "button">
+        Monitor
+    </a>
+</div>
+
+<div class="card bg-light mb-3" style="max-width: 25rem;">
+    <div class="card-header"><p th:text = "${patientSelection.name} + ' ' + ${patientSelection.surname}"></p></div>
+    <div class="card-body">
+
+        <p th:text = "'DOB: ' + ${patientSelection.birthDate}"></p>
+        <p th:text = "'Gender: ' + ${patientSelection.gender}"></p>
+        <p th:text = "'Address: ' + ${patientSelection.address}"></p>
+        <p th:text = "'City: ' + ${patientSelection.city}"></p>
+        <p th:text = "'State: ' + ${patientSelection.state}"></p>
+        <p th:text = "'Country: ' + ${patientSelection.country}"></p>
+    </div>
+
+
+
+
+
+</body>
+</html>
